@@ -3,6 +3,8 @@
 [System.Serializable]
 public class TileSwapper
 {
+    #region Properties
+
     [SerializeField, Range(0.1f, 10f)]
     private float duration = 0.25f; //length of animation
 
@@ -18,6 +20,7 @@ public class TileSwapper
 
     private bool reverse;
 
+    #endregion
 
     #region Methods
 

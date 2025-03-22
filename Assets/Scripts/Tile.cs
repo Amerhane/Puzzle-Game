@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
+    #region Properties
+
     [SerializeField, Range(0f, 1f)]
     private float disappearDuration = 0.25f;
 
@@ -9,13 +11,21 @@ public class Tile : MonoBehaviour
 
     private float disappearProgress;
 
+    private FallingState falling;
+
+    #endregion Properties
+
+    #region FallingState Private Struct
+
     [System.Serializable]
     private struct FallingState
     {
         public float fromY, toY, duration, progress;
     }
 
-    private FallingState falling;
+    #endregion
+
+    #region Methods
 
     public Tile Spawn(Vector3 position)
     {
@@ -92,4 +102,6 @@ public class Tile : MonoBehaviour
     {
         pool.Recycle(this);
     }
+
+    #endregion
 }
