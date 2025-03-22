@@ -14,11 +14,23 @@ public class GameController : MonoBehaviour
     [SerializeField, Range(0.1f, 1f)]
     private float dragThreshold = 0.5f;
 
+    [SerializeField]
+    private TileSwapper tileSwapper;
+
+    [SerializeField]
+    private float dropSpeed = 8f;
+
+    [SerializeField, Range(0f, 10f)]
+    private float newDropOffset = 2f; //spawns tiles higher above the grid
+                                      //to enhance drop animation.
+
     private Grid<Tile> tiles;
     float2 tileOffset;
 
     private bool isPlaying;
-    private bool isBusy;
+    //private bool isBusy;
+
+    private float busyDuration;
 
     #endregion
 
@@ -27,7 +39,7 @@ public class GameController : MonoBehaviour
     private void Start()
     {
         isPlaying = true;
-        isBusy = false;
+        //isBusy = false;
     }
 
     #endregion
@@ -36,6 +48,7 @@ public class GameController : MonoBehaviour
 
     public void StartNewGame()
     {
+        busyDuration = 0f;
         game.StartNewGame();
         tileOffset = -0.5f * (float2)(game.GetSize() - 1);
 
@@ -118,23 +131,45 @@ public class GameController : MonoBehaviour
 
     private void MakeMove(Move move)
     {
-        if (game.TryMove(move))
+        bool success = game.TryMove(move);
+        Tile a = tiles[move.GetFrom()];
+        Tile b = tiles[move.GetTo()];
+        busyDuration = tileSwapper.Swap(a, b, !success);
+
+        if (success)
         {
-            //swap these two tiles
-            (tiles[move.GetFrom()].transform.localPosition,
-              tiles[move.GetTo()].transform.localPosition) 
-              
-              =
-
-              (tiles[move.GetTo()].transform.localPosition,
-              tiles[move.GetFrom()].transform.localPosition);
-
-            tiles.Swap(move.GetFrom(), move.GetTo());
+            tiles[move.GetFrom()] = b;
+            tiles[move.GetTo()] = a;
         }
+
+        //if (game.TryMove(move))
+        //{
+        //    //swap these two tiles
+        //    (tiles[move.GetFrom()].transform.localPosition,
+        //      tiles[move.GetTo()].transform.localPosition) 
+              
+        //      =
+
+        //      (tiles[move.GetTo()].transform.localPosition,
+        //      tiles[move.GetFrom()].transform.localPosition);
+
+        //    tiles.Swap(move.GetFrom(), move.GetTo());
+        //}
     }
 
     public void DoWork()
     {
+        //give time to allow the animation to play before processing matches.
+        if (busyDuration > 0f)
+        {
+            tileSwapper.Update();
+            busyDuration -= Time.deltaTime;
+            if (busyDuration > 0f)
+            {
+                return;
+            }
+        }
+
         if (game.HasMatches())
         {
             ProcessMatches();
@@ -155,7 +190,7 @@ public class GameController : MonoBehaviour
         for (int i = 0; i < game.GetClearedTileCoordinates().Count; i++)
         {
             int2 coordinate = game.GetClearedTileCoordinates()[i];
-            tiles[coordinate].Despawn();
+            busyDuration = Mathf.Max(tiles[coordinate].Disappear(), busyDuration);
             tiles[coordinate] = null;
         }
     }
@@ -176,20 +211,23 @@ public class GameController : MonoBehaviour
                 int2 dropCoordinates = 
                     new int2(drop.GetCoordinates().x, drop.GetFromY());
                 tile = tiles[dropCoordinates];
-                tile.transform.localPosition = new Vector3(
-                    drop.GetCoordinates().x + tileOffset.x,
-                    drop.GetCoordinates().y + tileOffset.y);
+                //tile.transform.localPosition = new Vector3(
+                //    drop.GetCoordinates().x + tileOffset.x,
+                //    drop.GetCoordinates().y + tileOffset.y);
             }
             else
             {
                 //spawn new tile at position if there is nothing above it.
                 tile = 
                     SpawnTile(game.GetTileAtCoordinate(drop.GetCoordinates()), 
-                        drop.GetCoordinates().x, drop.GetCoordinates().y);
+                        drop.GetCoordinates().x, drop.GetFromY() + newDropOffset);
             }
 
             //update tile grid.
             tiles[drop.GetCoordinates()] = tile;
+            busyDuration = Mathf.Max(
+                tile.Fall(drop.GetCoordinates().y + tileOffset.y, dropSpeed),
+                    busyDuration);
         }
     }
 
@@ -215,7 +253,7 @@ public class GameController : MonoBehaviour
 
     public bool IsBusy()
     {
-        return isBusy;
+        return busyDuration > 0f;
     }
 
     #endregion

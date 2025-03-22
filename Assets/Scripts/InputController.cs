@@ -41,6 +41,7 @@ public class InputController : MonoBehaviour
 
     private void HandleInput()
     {
+        //Mobile Inputs
         if (Input.touchCount == 1)
         {
             Touch touch = Input.GetTouch(0);
