@@ -7,7 +7,7 @@ public class Tile : MonoBehaviour
     [SerializeField, Range(0f, 1f)]
     private float disappearDuration = 0.25f;
 
-    PrefabInstancePool<Tile> pool;
+    private PrefabInstancePool<Tile> pool;
 
     private float disappearProgress;
 

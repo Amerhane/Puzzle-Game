@@ -391,6 +391,11 @@ MonoBehaviour:
   - {fileID: 4067680668492098540, guid: 5af5b3860ea376840a2c9da85a8d3f9f, type: 3}
   - {fileID: 1321774613115225809, guid: 41979c0f8c9132946874bb48bcf7a9b6, type: 3}
   dragThreshold: 0.5
+  tileSwapper:
+    duration: 0.25
+    maxDepthOffset: 0.5
+  dropSpeed: 8
+  newDropOffset: 2
 --- !u!114 &1053712330
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -413,7 +418,7 @@ Transform:
   m_GameObject: {fileID: 1053712327}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 2, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
