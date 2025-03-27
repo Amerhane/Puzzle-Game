@@ -7,6 +7,8 @@ public class InputController : MonoBehaviour
     [SerializeField]
     private GameController gameController;
 
+
+
     private Vector3 firstTouchPosition;
     private Vector3 lastTouchPosition;
 

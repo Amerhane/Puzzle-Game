@@ -1,5 +1,8 @@
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+using System.Collections.Generic;
 
 public class GameController : MonoBehaviour
 {
@@ -21,7 +24,7 @@ public class GameController : MonoBehaviour
     private float dropSpeed = 8f;
 
     [SerializeField, Range(0f, 10f)]
-    private float newDropOffset = 2f; //spawns tiles higher above the grid
+    private float newDropOffset = 2f; //how high off the grid a tile will spawn
                                       //to enhance drop animation.
 
     private Grid<Tile> tiles;
@@ -31,6 +34,13 @@ public class GameController : MonoBehaviour
     //private bool isBusy;
 
     private float busyDuration;
+
+    [SerializeField]
+    private TMP_Text[] compTexts;
+    [SerializeField]
+    private Image[] compImages;
+    [SerializeField]
+    private Sprite[] compSprites;
 
     #endregion
 
@@ -50,6 +60,7 @@ public class GameController : MonoBehaviour
     {
         busyDuration = 0f;
         game.StartNewGame();
+        SetRecipeUI();
         tileOffset = -0.5f * (float2)(game.GetSize() - 1);
 
         if (tiles.IsUndefined())
@@ -240,6 +251,16 @@ public class GameController : MonoBehaviour
 
         return new float2(position.x - tileOffset.x + 0.5f,
             position.y - tileOffset.y + 0.5f);
+    }
+
+    private void SetRecipeUI()
+    {
+        Dictionary<TileType, int> componentInRecipe = game.GetRecipe().GetComponents();
+        int componentIndex = 0;
+        foreach (TileType tileComp in componentInRecipe.Keys)
+        {
+            //compImages[componentIndex] = compSprites[]
+        }
     }
 
     #endregion

@@ -19,12 +19,15 @@ public class Game : MonoBehaviour
 
     private List<TileDrop> droppedTiles;
 
+    private Recipe recipe;
+
     #endregion
 
     #region Methods
 
     public void StartNewGame()
     {
+        recipe = new Recipe("Steamed Carrots", "carrot", 5);
         if (grid.IsUndefined())
         {
             grid = new(size);
@@ -220,8 +223,8 @@ public class Game : MonoBehaviour
             //remove the matches and add to coordinates that need to 
             //be refilled.
 
-            //Increment coordinates by the step...
-            //took me 40 mins to find I forgot this.
+            //Increment coordinates by the step.
+            //took me 40 mins to find I forgot this....
             for (int i = 0; i < match.Length(); matchCoordinate += step, i++)
             {
                 if (grid[matchCoordinate] != TileType.none)
@@ -310,6 +313,11 @@ public class Game : MonoBehaviour
     public List<TileDrop> GetDroppedTiles()
     {
         return droppedTiles;
+    }
+
+    public Recipe GetRecipe()
+    {
+        return recipe;
     }
 
     #endregion
