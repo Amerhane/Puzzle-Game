@@ -31,7 +31,6 @@ public class GameController : MonoBehaviour
     float2 tileOffset;
 
     private bool isPlaying;
-    //private bool isBusy;
 
     private float busyDuration;
 
@@ -39,8 +38,9 @@ public class GameController : MonoBehaviour
     private TMP_Text[] compTexts;
     [SerializeField]
     private Image[] compImages;
+
     [SerializeField]
-    private Sprite[] compSprites;
+    private GameObject winPanel;
 
     #endregion
 
@@ -49,7 +49,7 @@ public class GameController : MonoBehaviour
     private void Start()
     {
         isPlaying = true;
-        //isBusy = false;
+        winPanel.SetActive(false);
     }
 
     #endregion
@@ -204,6 +204,13 @@ public class GameController : MonoBehaviour
             busyDuration = Mathf.Max(tiles[coordinate].Disappear(), busyDuration);
             tiles[coordinate] = null;
         }
+
+        if (game.IsGameOver())
+        {
+            isPlaying = false;
+            SpawnWinPanel();
+        }
+        SetRecipeUI();
     }
 
     private void DropTiles()
@@ -253,16 +260,6 @@ public class GameController : MonoBehaviour
             position.y - tileOffset.y + 0.5f);
     }
 
-    private void SetRecipeUI()
-    {
-        Dictionary<TileType, int> componentInRecipe = game.GetRecipe().GetComponents();
-        int componentIndex = 0;
-        foreach (TileType tileComp in componentInRecipe.Keys)
-        {
-            //compImages[componentIndex] = compSprites[]
-        }
-    }
-
     #endregion
 
     #region Getters
@@ -275,6 +272,37 @@ public class GameController : MonoBehaviour
     public bool IsBusy()
     {
         return busyDuration > 0f;
+    }
+
+    #endregion
+
+    #region UI Methods
+
+    private void SetRecipeUI()
+    {
+        Dictionary<Ingredient, int> componentInRecipe = game.GetRecipe().GetComponents();
+        int index = 0;
+        foreach (KeyValuePair<Ingredient, int> ingredient in componentInRecipe)
+        {
+            compImages[index].sprite = ingredient.Key.GetSprite();
+            compTexts[index].text = ingredient.Value.ToString();
+            index++;
+        }
+    }
+
+    private void SpawnWinPanel()
+    {
+        winPanel.SetActive(true);
+    }
+
+    public void OnRetryButtonPress()
+    {
+        StartNewGame();
+    }
+
+    public void OnQuitButtonPress()
+    {
+
     }
 
     #endregion

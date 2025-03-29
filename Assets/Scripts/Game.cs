@@ -21,13 +21,16 @@ public class Game : MonoBehaviour
 
     private Recipe recipe;
 
+    private bool gameOver;
+
     #endregion
 
     #region Methods
 
     public void StartNewGame()
     {
-        recipe = new Recipe("Steamed Carrots", "carrot", 5);
+        gameOver = false;
+        recipe = new Recipe("carrot", 3);
         if (grid.IsUndefined())
         {
             grid = new(size);
@@ -220,6 +223,9 @@ public class Game : MonoBehaviour
             }
 
             int2 matchCoordinate = match.GetCoordinate();
+            //Check match for matching recipe
+            CheckRecipe(grid[matchCoordinate], match.Length());
+
             //remove the matches and add to coordinates that need to 
             //be refilled.
 
@@ -281,6 +287,31 @@ public class Game : MonoBehaviour
         FindMatches();
     }
 
+    private void CheckRecipe(TileType tileType, int length)
+    {
+        //Def not the most elegent way of doing this, but it works.
+        //The structure needs reworking...
+        Ingredient findIngredientRef = new Ingredient();
+        bool found = false;
+        foreach (KeyValuePair<Ingredient, int> ingredient in recipe.GetComponents())
+        {
+            if (ingredient.Key.GetTileType() == tileType)
+            {
+                findIngredientRef = ingredient.Key;
+                found = true;
+            }
+        }
+
+        if (found)
+        {
+            recipe.GetComponents()[findIngredientRef] -= length;
+            if (recipe.GetComponents()[findIngredientRef] <= 0)
+            {
+                gameOver = true;
+            }
+        }
+    }
+
     #endregion
 
     #region Getters
@@ -318,6 +349,11 @@ public class Game : MonoBehaviour
     public Recipe GetRecipe()
     {
         return recipe;
+    }
+
+    public bool IsGameOver()
+    {
+        return gameOver;
     }
 
     #endregion
