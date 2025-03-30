@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
@@ -400,7 +401,7 @@ public class GameController : MonoBehaviour
 
     public void OnQuitButtonPress()
     {
-        //Main Menu?
+        SceneManager.LoadScene(0);
     }
 
     #endregion
