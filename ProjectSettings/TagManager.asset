@@ -41,10 +41,10 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Placed Tiles
+  - name: UI
     uniqueID: 738540779
     locked: 0
-  - name: Hover Tiles
+  - name: Above UI
     uniqueID: 475629763
     locked: 0
   m_RenderingLayers:

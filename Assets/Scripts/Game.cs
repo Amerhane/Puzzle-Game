@@ -24,7 +24,7 @@ public class Game : MonoBehaviour
 
     private bool gameOver;
 
-    private bool makeGameHarder;
+    private bool makeGameHarder = false;
 
     #endregion
 
@@ -33,17 +33,8 @@ public class Game : MonoBehaviour
     public void StartNewGame()
     {
         gameOver = false;
-
-        if (grid.IsUndefined())
-        {
-            grid = new(size);
-            matches = new List<Match>();
-            clearedTileCoordinates = new List<int2>();
-            droppedTiles = new List<TileDrop>();
-            recipe = RecipeGenerator.Instance.CreateRecipe(Difficulty.easy);
-            makeGameHarder = false;
-        }
-        else if (makeGameHarder)
+        
+        if (makeGameHarder)
         {
             if (recipe.GetDifficulty() == Difficulty.easy)
             {
@@ -57,6 +48,30 @@ public class Game : MonoBehaviour
             {
                 recipe = RecipeGenerator.Instance.CreateRecipe(Difficulty.hard);
             }
+            makeGameHarder = false;
+        }
+        else if(!grid.IsUndefined() && !makeGameHarder)
+        {
+            if (recipe.GetDifficulty() == Difficulty.easy)
+            {
+                recipe = RecipeGenerator.Instance.CreateRecipe(Difficulty.easy);
+            }
+            else if (recipe.GetDifficulty() == Difficulty.med)
+            {
+                recipe = RecipeGenerator.Instance.CreateRecipe(Difficulty.med);
+            }
+            else if (recipe.GetDifficulty() == Difficulty.hard)
+            {
+                recipe = RecipeGenerator.Instance.CreateRecipe(Difficulty.hard);
+            }
+        }
+        else if (grid.IsUndefined())
+        {
+            grid = new(size);
+            matches = new List<Match>();
+            clearedTileCoordinates = new List<int2>();
+            droppedTiles = new List<TileDrop>();
+            recipe = RecipeGenerator.Instance.CreateRecipe(Difficulty.easy);
             makeGameHarder = false;
         }
         FillGrid();

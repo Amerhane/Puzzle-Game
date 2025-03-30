@@ -16,6 +16,12 @@ public class Tile : MonoBehaviour
     [SerializeField]
     private GameObject particleEffect;
 
+    [Header("Audio")]
+    [SerializeField]
+    private AudioClip matchSound;
+
+    private AudioSource matchAudioSource;
+
     #endregion Properties
 
     #region FallingState Private Struct
@@ -24,6 +30,15 @@ public class Tile : MonoBehaviour
     private struct FallingState
     {
         public float fromY, toY, duration, progress;
+    }
+
+    #endregion
+
+    #region UnityMethods
+
+    private void Awake()
+    {
+        matchAudioSource = GetComponent<AudioSource>();
     }
 
     #endregion
@@ -99,6 +114,7 @@ public class Tile : MonoBehaviour
         disappearProgress = 0f;
         enabled = true;
         Instantiate(particleEffect, this.transform.position, Quaternion.identity);
+        matchAudioSource.PlayOneShot(matchSound);
         return disappearDuration;
     }
 

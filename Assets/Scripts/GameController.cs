@@ -51,9 +51,24 @@ public class GameController : MonoBehaviour
     [SerializeField]
     private TMP_Text difficultyText;
 
+    [Header("Audio")]
+    [SerializeField]
+    private AudioClip victorySound;
+    [SerializeField]
+    private AudioClip loseSound;
+    [SerializeField]
+    private AudioClip swapSound;
+
+    private AudioSource audioSource;
+
     #endregion
 
     #region Unity Methods
+
+    private void Awake()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
 
     private void Start()
     {
@@ -168,6 +183,7 @@ public class GameController : MonoBehaviour
 
     private void MakeMove(Move move)
     {
+        audioSource.PlayOneShot(swapSound);
         bool success = game.TryMove(move);
         Tile a = tiles[move.GetFrom()];
         Tile b = tiles[move.GetTo()];
@@ -238,12 +254,14 @@ public class GameController : MonoBehaviour
         {
             isPlaying = false;
             SpawnWinPanel();
+            audioSource.PlayOneShot(victorySound);
             game.MakeGameHarder();
         }
         else if (numberOfTurns <= 0)
         {
             isPlaying = false;
             SpawnLosePanel();
+            audioSource.PlayOneShot(loseSound);
         }
 
         SetRecipeUI();
@@ -362,6 +380,7 @@ public class GameController : MonoBehaviour
         {
             compImages[i].enabled = false;
             compTexts[i].enabled = false;
+            compTexts[i].color = Color.white;
         }
     }
 
