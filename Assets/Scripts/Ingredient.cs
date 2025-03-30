@@ -28,31 +28,31 @@ public struct Ingredient
         {
             case "apple":
                 type = TileType.apple;
-                sprite = Resources.Load<Sprite>("icon_apple_LP");
+                sprite = Resources.Load<Sprite>("Icons/icon_apple_LP");
                 break;
             case "avocado":
                 type = TileType.avocado;
-                sprite = Resources.Load<Sprite>("icon_avocado_LP");
+                sprite = Resources.Load<Sprite>("Icons/icon_avocado_LP");
                 break;
             case "banana":
                 type = TileType.banana;
-                sprite = Resources.Load<Sprite>("icon_banana_LP");
+                sprite = Resources.Load<Sprite>("Icons/icon_banana_LP");
                 break;
             case "carrot":
                 type = TileType.carrot;
-                sprite = Resources.Load<Sprite>("icon_carrot_LP");
+                sprite = Resources.Load<Sprite>("Icons/icon_carrot_LP");
                 break;
             case "cherries":
                 type = TileType.cherries;
-                sprite = Resources.Load<Sprite>("icon_cherries_LP");
+                sprite = Resources.Load<Sprite>("Icons/icon_cherries_LP");
                 break;
             case "pears":
                 type = TileType.pears;
-                sprite = Resources.Load<Sprite>("icon_pear_LP");
+                sprite = Resources.Load<Sprite>("Icons/icon_pear_LP");
                 break;
             case "pineapple":
                 type = TileType.pineapple;
-                sprite = Resources.Load<Sprite>("icon_pineapple_LP");
+                sprite = Resources.Load<Sprite>("Icons/icon_pineapple_LP");
                 break;
             default:
                 Debug.LogError(ingredientName + " is not a valid TileType");
