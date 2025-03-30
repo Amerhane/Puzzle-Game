@@ -4,17 +4,26 @@ using UnityEngine;
 [System.Serializable]
 public struct Recipe
 {
+    private int numberOfTurns;
     //List of components
     private Dictionary<Ingredient, int> components;
 
-    public Recipe(string componentName, int amountOfComponet)
+    private Difficulty difficulty;
+
+    public Recipe(string componentName, int amountOfComponet, 
+        int numberOfTurns, Difficulty difficulty)
     {
+        this.numberOfTurns = numberOfTurns;
+        this.difficulty = difficulty;
         components = new Dictionary<Ingredient, int>();
         CreateDictionary(componentName, amountOfComponet);
     }
 
-    public Recipe(string[] componentNames, int[] amountOfComponets)
+    public Recipe(string[] componentNames, int[] amountOfComponets, 
+        int numberOfTurns, Difficulty difficulty)
     {
+        this.numberOfTurns = numberOfTurns;
+        this.difficulty = difficulty;
         components = new Dictionary<Ingredient, int>();
         CreateDictionary(componentNames, amountOfComponets);
     }
@@ -44,5 +53,15 @@ public struct Recipe
     public Dictionary<Ingredient, int> GetComponents()
     {
         return components;
+    }
+
+    public int GetNumberOfTurns()
+    {
+        return numberOfTurns;
+    }
+
+    public Difficulty GetDifficulty()
+    {
+        return difficulty;
     }
 }

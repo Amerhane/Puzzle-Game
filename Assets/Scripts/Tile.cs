@@ -13,6 +13,9 @@ public class Tile : MonoBehaviour
 
     private FallingState falling;
 
+    [SerializeField]
+    private GameObject particleEffect;
+
     #endregion Properties
 
     #region FallingState Private Struct
@@ -95,6 +98,7 @@ public class Tile : MonoBehaviour
     {
         disappearProgress = 0f;
         enabled = true;
+        Instantiate(particleEffect, this.transform.position, Quaternion.identity);
         return disappearDuration;
     }
 

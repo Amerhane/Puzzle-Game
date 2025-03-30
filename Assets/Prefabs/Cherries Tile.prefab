@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   disappearDuration: 0.4
+  particleEffect: {fileID: 1449242181322416601, guid: 052d5f6cf7d3ebc44bba49fbe653f9a8, type: 3}
 --- !u!1 &6838878523976611059
 GameObject:
   m_ObjectHideFlags: 0

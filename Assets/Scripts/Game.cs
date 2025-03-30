@@ -2,6 +2,7 @@
 using Unity.Mathematics;
 using Random = UnityEngine.Random;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
 public class Game : MonoBehaviour
 {
@@ -23,6 +24,8 @@ public class Game : MonoBehaviour
 
     private bool gameOver;
 
+    private bool makeGameHarder;
+
     #endregion
 
     #region Methods
@@ -30,13 +33,31 @@ public class Game : MonoBehaviour
     public void StartNewGame()
     {
         gameOver = false;
-        recipe = new Recipe("carrot", 3);
+
         if (grid.IsUndefined())
         {
             grid = new(size);
             matches = new List<Match>();
             clearedTileCoordinates = new List<int2>();
             droppedTiles = new List<TileDrop>();
+            recipe = RecipeGenerator.Instance.CreateRecipe(Difficulty.easy);
+            makeGameHarder = false;
+        }
+        else if (makeGameHarder)
+        {
+            if (recipe.GetDifficulty() == Difficulty.easy)
+            {
+                recipe = RecipeGenerator.Instance.CreateRecipe(Difficulty.med);
+            }
+            else if (recipe.GetDifficulty() == Difficulty.med)
+            {
+                recipe = RecipeGenerator.Instance.CreateRecipe(Difficulty.hard);
+            }
+            else
+            {
+                recipe = RecipeGenerator.Instance.CreateRecipe(Difficulty.hard);
+            }
+            makeGameHarder = false;
         }
         FillGrid();
     }
@@ -96,7 +117,7 @@ public class Game : MonoBehaviour
                 //Avoid match by decreasing random by the match count,
                 //and skip left and down, if needed.
                 TileType tile = (TileType)Random.Range(1,
-                        GameDefaults.NumberOfDifferentTiles - potentialMatchCount);
+                        (GameDefaults.NumberOfDifferentTiles + 1) - potentialMatchCount);
                 if (potentialMatchCount > 0 && tile >= left)
                 {
                     tile += 1;
@@ -277,7 +298,7 @@ public class Game : MonoBehaviour
             { 
                 int2 tileCoordinate = new int2(x, size.y - hole);
                 grid[tileCoordinate] = 
-                    (TileType)Random.Range(1, GameDefaults.NumberOfDifferentTiles);
+                    (TileType)Random.Range(1, GameDefaults.NumberOfDifferentTiles + 1);
                 droppedTiles.Add(new TileDrop(tileCoordinate, holeCount));
             }
         }
@@ -292,25 +313,81 @@ public class Game : MonoBehaviour
         //Def not the most elegent way of doing this, but it works.
         //The structure needs reworking...
         Ingredient findIngredientRef = new Ingredient();
-        bool found = false;
+        bool foundInList = false;
         foreach (KeyValuePair<Ingredient, int> ingredient in recipe.GetComponents())
         {
             if (ingredient.Key.GetTileType() == tileType)
             {
                 findIngredientRef = ingredient.Key;
-                found = true;
+                foundInList = true;
             }
         }
 
-        if (found)
+        if (foundInList)
         {
             recipe.GetComponents()[findIngredientRef] -= length;
-            if (recipe.GetComponents()[findIngredientRef] <= 0)
+            if (CheckWin())
             {
                 gameOver = true;
             }
         }
     }
+
+    private bool CheckWin()
+    {
+        bool firstIngredient = false, 
+            secondIngredient = false, 
+            thirdIngredient = false;
+        int index = 0;
+        foreach (KeyValuePair<Ingredient, int> ingredient in recipe.GetComponents())
+        {
+            if (ingredient.Value <= 0)
+            {
+                if (index == 0)
+                {
+                    firstIngredient = true;
+                }
+                else if (index == 1)
+                {
+                    secondIngredient = true;
+                }
+                else if (index == 2)
+                {
+                    thirdIngredient = true;
+                }
+            }
+            index++;
+        }
+
+        switch (recipe.GetDifficulty())
+        {
+            case Difficulty.easy:
+                if (firstIngredient)
+                {
+                    return true;
+                }
+                break;
+            case Difficulty.med:
+                if (firstIngredient && secondIngredient)
+                {
+                    return true;
+                }
+                break;
+            case Difficulty.hard:
+                if (firstIngredient && secondIngredient &&  thirdIngredient)
+                {
+                    return true;
+                }
+                break;
+        }
+
+        return false;
+    }
+
+    //private Difficulty GetRadomDifficulty()
+    //{
+    //    return (Difficulty)Random.Range(1, 3);
+    //}
 
     #endregion
 
@@ -354,6 +431,11 @@ public class Game : MonoBehaviour
     public bool IsGameOver()
     {
         return gameOver;
+    }
+
+    public void MakeGameHarder()
+    {
+        makeGameHarder = true;
     }
 
     #endregion

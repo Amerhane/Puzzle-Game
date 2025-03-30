@@ -41,6 +41,15 @@ public class GameController : MonoBehaviour
 
     [SerializeField]
     private GameObject winPanel;
+    [SerializeField]
+    private GameObject losePanel;
+
+    private int numberOfTurns;
+
+    [SerializeField]
+    private TMP_Text turnTimerText;
+    [SerializeField]
+    private TMP_Text difficultyText;
 
     #endregion
 
@@ -50,6 +59,7 @@ public class GameController : MonoBehaviour
     {
         isPlaying = true;
         winPanel.SetActive(false);
+        losePanel.SetActive(false);
     }
 
     #endregion
@@ -58,9 +68,22 @@ public class GameController : MonoBehaviour
 
     public void StartNewGame()
     {
+        isPlaying = true;
+
+        winPanel.SetActive(false);
+        winPanel.transform.localScale = Vector3.zero;
+
+        losePanel.SetActive(false);
+        losePanel.transform.localScale = Vector3.zero;
+
         busyDuration = 0f;
         game.StartNewGame();
+
+        numberOfTurns = game.GetRecipe().GetNumberOfTurns();
+        turnTimerText.text = numberOfTurns.ToString();
+
         SetRecipeUI();
+
         tileOffset = -0.5f * (float2)(game.GetSize() - 1);
 
         if (tiles.IsUndefined())
@@ -73,7 +96,10 @@ public class GameController : MonoBehaviour
                 for (int x = 0; x < tiles.GetSizeX(); x++)
                 {
                     int2 coordinate = new int2(x, y);
-                    tiles[coordinate].Despawn();
+                    if (tiles[coordinate] != null) //fix null ref on game restart
+                    {
+                        tiles[coordinate].Despawn();
+                    }
                     tiles[coordinate] = null;
                 }
         }
@@ -94,7 +120,7 @@ public class GameController : MonoBehaviour
                 new Vector3(x + tileOffset.x, y + tileOffset.y));
     }
 
-    public bool EvaluateDrag (Vector3 start, Vector3 end)
+    public bool EvaluateDrag(Vector3 start, Vector3 end)
     {
         //Get the tile coordinates that were swiped on
         float2 tileCoordStart = ScreenToTileSpace(start);
@@ -151,6 +177,9 @@ public class GameController : MonoBehaviour
         {
             tiles[move.GetFrom()] = b;
             tiles[move.GetTo()] = a;
+
+            numberOfTurns--;
+            turnTimerText.text = numberOfTurns.ToString();
         }
 
         //if (game.TryMove(move))
@@ -209,7 +238,14 @@ public class GameController : MonoBehaviour
         {
             isPlaying = false;
             SpawnWinPanel();
+            game.MakeGameHarder();
         }
+        else if (numberOfTurns <= 0)
+        {
+            isPlaying = false;
+            SpawnLosePanel();
+        }
+
         SetRecipeUI();
     }
 
@@ -280,13 +316,52 @@ public class GameController : MonoBehaviour
 
     private void SetRecipeUI()
     {
+        ResetRecipeUI();
+
+        Difficulty gameDifficulty = game.GetRecipe().GetDifficulty();
+
+        if (gameDifficulty == Difficulty.easy)
+        {
+            difficultyText.text = GameDefaults.easyText;
+            difficultyText.color = Color.green;
+        }
+        else if (gameDifficulty == Difficulty.med)
+        {
+            difficultyText.text = GameDefaults.mediumText;
+            difficultyText.color = Color.yellow;
+        }
+        else if (gameDifficulty == Difficulty.hard)
+        {
+            difficultyText.text = GameDefaults.hardText;
+            difficultyText.color = Color.red;
+        }
+
         Dictionary<Ingredient, int> componentInRecipe = game.GetRecipe().GetComponents();
         int index = 0;
         foreach (KeyValuePair<Ingredient, int> ingredient in componentInRecipe)
         {
             compImages[index].sprite = ingredient.Key.GetSprite();
             compTexts[index].text = ingredient.Value.ToString();
+
+            if (ingredient.Value <= 0)
+            {
+                compTexts[index].text = "Done!";
+                compTexts[index].color = Color.green;
+            }
+
+            compImages[index].enabled = true;
+            compTexts[index].enabled = true;
+
             index++;
+        }
+    }
+
+    private void ResetRecipeUI()
+    {
+        for (int i = 0; i < compImages.Length; i++)
+        {
+            compImages[i].enabled = false;
+            compTexts[i].enabled = false;
         }
     }
 
@@ -295,6 +370,10 @@ public class GameController : MonoBehaviour
         winPanel.SetActive(true);
     }
 
+    private void SpawnLosePanel()
+    {
+        losePanel.SetActive(true);
+    }
     public void OnRetryButtonPress()
     {
         StartNewGame();
@@ -302,7 +381,7 @@ public class GameController : MonoBehaviour
 
     public void OnQuitButtonPress()
     {
-
+        //Main Menu?
     }
 
     #endregion

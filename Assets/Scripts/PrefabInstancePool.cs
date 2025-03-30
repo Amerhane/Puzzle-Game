@@ -3,7 +3,7 @@ using UnityEngine;
 
 public struct PrefabInstancePool<T> where T : MonoBehaviour
 {
-    Stack<T> pool;
+    private Stack<T> pool;
 
     public T GetInstance(T prefab)
     {
