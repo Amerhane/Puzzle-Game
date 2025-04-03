@@ -1,11 +1,21 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Struct that holds a certain tile type and a sprite so that the
+/// correct sprite can be displayed in the UI.
+/// </summary>
 [System.Serializable]
 public struct Ingredient
 {
+    #region Properties
+
     private Sprite sprite;
     private TileType tileType;
     private string name;
+
+    #endregion
+
+    #region Constructor
 
     public Ingredient(string name)
     {
@@ -14,6 +24,10 @@ public struct Ingredient
         this.tileType = TileType.none;
         Init(name);
     }
+
+    #endregion
+
+    #region Methods
 
     private void Init(string name)
     {
@@ -24,6 +38,8 @@ public struct Ingredient
     {
         TileType type = TileType.none;
 
+        //TODO: create sprite in a different method
+        //since it is out of scope for this method?
         switch (ingredientName)
         {
             case "apple":
@@ -62,6 +78,10 @@ public struct Ingredient
         return type;
     }
 
+    #endregion
+
+    #region Getters
+
     public string GetName()
     {
         return name;
@@ -77,12 +97,17 @@ public struct Ingredient
         return sprite;
     }
 
-    public bool Equals(Ingredient other)
-    {
-        if (this.tileType == other.GetTileType())
-        {
-            return true;
-        }
-        return false;
-    }
+    #endregion
+
+    //This is an attempt at a custom equals operator.
+    //Did not work.
+    //TODO: research later
+    //public bool Equals(Ingredient other)
+    //{
+    //    if (this.tileType == other.GetTileType())
+    //    {
+    //        return true;
+    //    }
+    //    return false;
+    //}
 }

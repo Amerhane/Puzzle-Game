@@ -1,15 +1,21 @@
 using UnityEngine;
 
+/// <summary>
+/// Transfers the input from the player to the game controller.
+/// </summary>
 public class InputController : MonoBehaviour
 {
     #region Properties
 
+    [Header("Game Controller")]
     [SerializeField]
     private GameController gameController;
 
+    //mobile input
     private Vector3 firstTouchPosition;
     private Vector3 lastTouchPosition;
 
+    //computer input
     private Vector3 firstMousePosition;
     private Vector3 lastMousePosition;
 
@@ -30,12 +36,12 @@ public class InputController : MonoBehaviour
             {
                 HandleInput();
             }
-            gameController.DoWork();
+            gameController.Process();
         }
-        else if(Input.GetKeyDown(KeyCode.Space))
-        {
-            gameController.StartNewGame();
-        }
+        //else if(Input.GetKeyDown(KeyCode.Space)) //for testing
+        //{
+        //    gameController.StartNewGame();
+        //}
     }
 
     #endregion
@@ -66,17 +72,22 @@ public class InputController : MonoBehaviour
             }
         }
 
-        //Computer Inputs
-        if (Input.GetMouseButtonDown(0))
-        {
-            firstMousePosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y);
-        }
-        else if (Input.GetMouseButtonUp(0))
-        {
-            lastMousePosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y);
+        /**
+         * Uncomment below when using computer or testing in unity client through the "game" mode.
+         * Leave commented when building to mobile or using unity simulator.
+         */
 
-            gameController.EvaluateDrag(firstMousePosition, lastMousePosition);
-        }
+        //Computer Inputs
+        //if (Input.GetMouseButtonDown(0))
+        //{
+        //    firstMousePosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y);
+        //}
+        //else if (Input.GetMouseButtonUp(0))
+        //{
+        //    lastMousePosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y);
+
+        //    gameController.EvaluateDrag(firstMousePosition, lastMousePosition);
+        //}
     }
 
     #endregion

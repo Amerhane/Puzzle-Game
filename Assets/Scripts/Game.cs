@@ -2,28 +2,25 @@
 using Unity.Mathematics;
 using Random = UnityEngine.Random;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 
+/// <summary>
+/// The backend handling of the game. This controls the logic behind the visuals.
+/// </summary>
 public class Game : MonoBehaviour
 {
     #region Properties
 
+    [Header("Grid Size")]
     [SerializeField]
     private int2 size = GameDefaults.GridSize;
 
-    Grid<TileType> grid;
-
+    private Grid<TileType> grid;
     private List<Match> matches;
-
     private List<int2> clearedTileCoordinates;
     private bool tilesNeedFilling;
-
     private List<TileDrop> droppedTiles;
-
     private Recipe recipe;
-
     private bool gameOver;
-
     private bool makeGameHarder = false;
 
     #endregion
@@ -32,7 +29,7 @@ public class Game : MonoBehaviour
 
     public void StartNewGame()
     {
-        gameOver = false;
+        gameOver = false; //make sure the game is not over in case of replaying a level.
         
         if (makeGameHarder)
         {
@@ -50,7 +47,7 @@ public class Game : MonoBehaviour
             }
             makeGameHarder = false;
         }
-        else if(!grid.IsUndefined() && !makeGameHarder)
+        else if(!grid.IsUndefined() && !makeGameHarder) //in case player hit to retry, and failed the level
         {
             if (recipe.GetDifficulty() == Difficulty.easy)
             {
@@ -65,7 +62,7 @@ public class Game : MonoBehaviour
                 recipe = RecipeGenerator.Instance.CreateRecipe(Difficulty.hard);
             }
         }
-        else if (grid.IsUndefined())
+        else if (grid.IsUndefined()) //used if the game is initalizing for the first time.
         {
             grid = new(size);
             matches = new List<Match>();
@@ -259,7 +256,7 @@ public class Game : MonoBehaviour
             }
 
             int2 matchCoordinate = match.GetCoordinate();
-            //Check match for matching recipe
+            //Check for a match in the current recipe
             CheckRecipe(grid[matchCoordinate], match.Length());
 
             //remove the matches and add to coordinates that need to 
@@ -286,7 +283,7 @@ public class Game : MonoBehaviour
         droppedTiles.Clear(); //clear dropped tiles from last drop.
         
         //loop through all columns.
-        //go to bottom to top
+        //go from bottom to top
         for (int x = 0; x < size.x; x++)
         {
             int holeCount = 0; //keep track of hole count.

@@ -1,5 +1,8 @@
 ﻿using Unity.Mathematics;
 
+/// <summary>
+/// Struct that holds the data needed to make a move.
+/// </summary>
 [System.Serializable]
 public struct Move
 {

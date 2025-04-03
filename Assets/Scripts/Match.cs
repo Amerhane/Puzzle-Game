@@ -1,5 +1,8 @@
 ﻿using Unity.Mathematics;
 
+/// <summary>
+/// Struct that holds the data needed to process a match.
+/// </summary>
 [System.Serializable]
 public struct Match
 {

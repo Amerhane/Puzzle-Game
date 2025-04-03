@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Default values of game constants.
+/// </summary>
 public static class GameDefaults
 {
     public const int NumberOfDifferentTiles = 7;

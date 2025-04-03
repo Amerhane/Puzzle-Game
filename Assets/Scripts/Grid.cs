@@ -1,5 +1,10 @@
 using Unity.Mathematics;
 
+/// <summary>
+/// Struct that holds data in an array and facilitates
+/// swaping of the data in the array.
+/// </summary>
+/// <typeparam name="T">The data type the grid is holding.</typeparam>
 [System.Serializable]
 public struct Grid<T>
 {
@@ -11,7 +16,7 @@ public struct Grid<T>
 
     #endregion
 
-    #region indexers
+    #region indexer
 
     public T this[int2 cell]
     {
@@ -27,7 +32,7 @@ public struct Grid<T>
 
     #endregion
 
-    #region Contructors
+    #region Contructor
 
     public Grid (int2 size)
     {
@@ -46,13 +51,16 @@ public struct Grid<T>
 
     public bool AreValidCoordinates(int2 coordinate)
     {
+        //Ensure all coordinates are within the size of the array.
         return (0 <= coordinate.x) && (coordinate.x < size.x) &&
             (0 <= coordinate.y) && (coordinate.y < size.y);
     }
 
     public void Swap(int2 cell1, int2 cell2)
     {
-        (this[cell1], this[cell2]) = (this[cell2], this[cell1]);
+        T temp = this[cell1];
+        this[cell1] = this[cell2];
+        this[cell2] = temp;
     }
 
     #endregion

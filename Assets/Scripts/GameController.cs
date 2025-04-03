@@ -5,48 +5,42 @@ using TMPro;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Controls the flow of the game's visuals and communicates between the
+/// player input and the underlying Game object.
+/// </summary>
 public class GameController : MonoBehaviour
 {
     #region Properties
 
+    [Header("Game Object")]
     [SerializeField]
     private Game game;
 
+    [Header("Tile Prefabs")]
     [SerializeField]
     private Tile[] tilePrefabs;
 
+    [Header("Animation Values")]
     [SerializeField, Range(0.1f, 1f)]
     private float dragThreshold = 0.5f;
-
     [SerializeField]
     private TileSwapper tileSwapper;
-
     [SerializeField]
     private float dropSpeed = 8f;
-
     [SerializeField, Range(0f, 10f)]
     private float newDropOffset = 2f; //how high off the grid a tile will spawn
                                       //to enhance drop animation.
 
-    private Grid<Tile> tiles;
-    private float2 tileOffset;
-
-    private bool isPlaying;
-
-    private float busyDuration;
-
+    [Header("UI")]
     [SerializeField]
     private TMP_Text[] compTexts;
     [SerializeField]
     private Image[] compImages;
-
     [SerializeField]
     private GameObject winPanel;
     [SerializeField]
     private GameObject losePanel;
-
-    private int numberOfTurns;
-
     [SerializeField]
     private TMP_Text turnTimerText;
     [SerializeField]
@@ -59,8 +53,13 @@ public class GameController : MonoBehaviour
     private AudioClip loseSound;
     [SerializeField]
     private AudioClip swapSound;
-
     private AudioSource audioSource;
+
+    private Grid<Tile> tiles;
+    private float2 tileOffset;
+    private bool isPlaying;
+    private float busyDuration; 
+    private int numberOfTurns;
 
     #endregion
 
@@ -100,13 +99,13 @@ public class GameController : MonoBehaviour
 
         SetRecipeUI();
 
-        tileOffset = -0.5f * (float2)(game.GetSize() - 1);
+        tileOffset = -0.5f * (float2)(game.GetSize() - 1); //set offset of the tile from eachother.
 
-        if (tiles.IsUndefined())
+        if (tiles.IsUndefined()) //If game is being first initalized.
         {
             tiles = new(game.GetSize());
         }
-        else
+        else //Link visual objects to corresponding under the hood objects.
         {
             for (int y = 0; y < tiles.GetSizeY(); y++)
                 for (int x = 0; x < tiles.GetSizeX(); x++)
@@ -120,6 +119,7 @@ public class GameController : MonoBehaviour
                 }
         }
 
+        //Spawn the visual representation of the tiles.
         for (int y = 0; y < tiles.GetSizeY(); y++)
             for (int x = 0; x < tiles.GetSizeX(); x++)
             {
@@ -136,7 +136,7 @@ public class GameController : MonoBehaviour
                 new Vector3(x + tileOffset.x, y + tileOffset.y));
     }
 
-    public bool EvaluateDrag(Vector3 start, Vector3 end)
+    public void EvaluateDrag(Vector3 start, Vector3 end)
     {
         //Get the tile coordinates that were swiped on
         float2 tileCoordStart = ScreenToTileSpace(start);
@@ -176,15 +176,17 @@ public class GameController : MonoBehaviour
             tiles.AreValidCoordinates(move.GetTo()))
         {
             MakeMove(move);
-            return false;
         }
-
-        return true;
+        else
+        {
+            Debug.Log("This is not a valid move:\n" + move.ToString());
+        }
     }
 
     private void MakeMove(Move move)
     {
         audioSource.PlayOneShot(swapSound);
+
         bool success = game.TryMove(move);
         Tile a = tiles[move.GetFrom()];
         Tile b = tiles[move.GetTo()];
@@ -214,7 +216,7 @@ public class GameController : MonoBehaviour
         //}
     }
 
-    public void DoWork()
+    public void Process()
     {
         //give time to allow the animation to play before processing matches.
         if (busyDuration > 0f)
@@ -243,7 +245,7 @@ public class GameController : MonoBehaviour
         game.ProcessMatches();
 
         //go through all the matches the game processed and
-        //despawn the tile and set the position to null for now.
+        //despawn the visual tiles and set the position to null for now.
         for (int i = 0; i < game.GetClearedTileCoordinates().Count; i++)
         {
             int2 coordinate = game.GetClearedTileCoordinates()[i];
@@ -307,26 +309,13 @@ public class GameController : MonoBehaviour
     private float2 ScreenToTileSpace(Vector3 screenPosition)
     {
         //TODO: Look this up
+        //needed tutorial on this.
         Ray ray = Camera.main.ScreenPointToRay(screenPosition);
         Vector3 position = ray.origin - ray.direction *
             (ray.origin.z / ray.direction.z);
 
         return new float2(position.x - tileOffset.x + 0.5f,
             position.y - tileOffset.y + 0.5f);
-    }
-
-    #endregion
-
-    #region Getters
-
-    public bool IsPlaying()
-    {
-        return isPlaying;
-    }
-
-    public bool IsBusy()
-    {
-        return busyDuration > 0f;
     }
 
     #endregion
@@ -394,6 +383,7 @@ public class GameController : MonoBehaviour
     {
         losePanel.SetActive(true);
     }
+
     public void OnRetryButtonPress()
     {
         StartNewGame();
@@ -402,6 +392,20 @@ public class GameController : MonoBehaviour
     public void OnQuitButtonPress()
     {
         SceneManager.LoadScene(0);
+    }
+
+    #endregion
+
+    #region Getters
+
+    public bool IsPlaying()
+    {
+        return isPlaying;
+    }
+
+    public bool IsBusy()
+    {
+        return busyDuration > 0f;
     }
 
     #endregion

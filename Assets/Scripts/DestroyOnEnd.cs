@@ -1,8 +1,17 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Destorys a gameobject when the particle system stops playing.
+/// </summary>
 public class DestroyOnEnd : MonoBehaviour
 {
+    #region Properties
+
     private ParticleSystem particle;
+
+    #endregion
+
+    #region Unity Methods
 
     private void Start()
     {
@@ -16,4 +25,6 @@ public class DestroyOnEnd : MonoBehaviour
             Destroy(this.gameObject);
         }
     }
+
+    #endregion
 }

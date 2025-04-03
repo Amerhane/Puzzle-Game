@@ -2,8 +2,13 @@
 using Random = UnityEngine.Random;
 using System.Collections.Generic;
 
+/// <summary>
+/// Generates a random recipe for the player to aquire to win.
+/// </summary>
 public sealed class RecipeGenerator
 {
+    #region Properties
+
     private static RecipeGenerator instance = null;
 
     public static RecipeGenerator Instance
@@ -11,12 +16,14 @@ public sealed class RecipeGenerator
         get 
         {
             if (instance == null)
+            {
                 instance = new RecipeGenerator();
-            return instance; 
+            }
+            return instance;
         }
     }
 
-    private readonly string[] ingredients =
+    private readonly string[] ingredientNames =
     {
         "apple",
         "avocado",
@@ -26,6 +33,10 @@ public sealed class RecipeGenerator
         "pears",
         "pineapple"
     };
+
+    #endregion
+
+    #region Methods
 
     public Recipe CreateRecipe(Difficulty difficulty)
     {
@@ -62,7 +73,7 @@ public sealed class RecipeGenerator
 
     private string GetRandomIngredient()
     {
-        return ingredients[Random.Range(0, ingredients.Length)];
+        return ingredientNames[Random.Range(0, ingredientNames.Length)];
     }
 
     private string[] GetRandomIngredients(int numOfIngredients)
@@ -102,4 +113,6 @@ public sealed class RecipeGenerator
 
         return compNumbers;
     }
+
+    #endregion
 }

@@ -1,14 +1,22 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Struct which holds the items the player needs to collect.
+/// </summary>
 [System.Serializable]
 public struct Recipe
 {
-    private int numberOfTurns;
+    #region Properties
+
     //List of components
     private Dictionary<Ingredient, int> components;
-
+    private int numberOfTurns;
     private Difficulty difficulty;
+
+    #endregion
+
+    #region Contructors
 
     public Recipe(string componentName, int amountOfComponet, 
         int numberOfTurns, Difficulty difficulty)
@@ -27,6 +35,10 @@ public struct Recipe
         components = new Dictionary<Ingredient, int>();
         CreateDictionary(componentNames, amountOfComponets);
     }
+
+    #endregion
+
+    #region Methods
 
     private void CreateDictionary(string componentName, int amountOfComponent)
     {
@@ -50,6 +62,10 @@ public struct Recipe
         }
     }
 
+    #endregion
+
+    #region Getters
+
     public Dictionary<Ingredient, int> GetComponents()
     {
         return components;
@@ -64,4 +80,6 @@ public struct Recipe
     {
         return difficulty;
     }
+
+    #endregion
 }
