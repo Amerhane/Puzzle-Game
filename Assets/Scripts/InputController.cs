@@ -7,10 +7,11 @@ public class InputController : MonoBehaviour
     [SerializeField]
     private GameController gameController;
 
-
-
     private Vector3 firstTouchPosition;
     private Vector3 lastTouchPosition;
+
+    private Vector3 firstMousePosition;
+    private Vector3 lastMousePosition;
 
     #endregion
 
@@ -63,6 +64,18 @@ public class InputController : MonoBehaviour
                 gameController.EvaluateDrag(firstTouchPosition,
                     lastTouchPosition);
             }
+        }
+
+        //Computer Inputs
+        if (Input.GetMouseButtonDown(0))
+        {
+            firstMousePosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y);
+        }
+        else if (Input.GetMouseButtonUp(0))
+        {
+            lastMousePosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y);
+
+            gameController.EvaluateDrag(firstMousePosition, lastMousePosition);
         }
     }
 

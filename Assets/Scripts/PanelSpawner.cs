@@ -4,9 +4,9 @@ using UnityEngine;
 public class PanelSpawner : MonoBehaviour
 {
     [SerializeField, Min(0f)]
-    private float scaleFactor = 0.1f;
+    private float scaleFactor = 0.4f;
 
-    private float maxScale = 1f;
+    private float maxScale = 2f;
 
     [SerializeField]
     private bool win;
@@ -28,7 +28,7 @@ public class PanelSpawner : MonoBehaviour
         while (maxScale > transform.localScale.x);
 
         //in case scale factor scales panel too much.
-        transform.localScale = Vector3.one;
+        transform.localScale = Vector3.one * 2f;
         if (win)
         {
             Instantiate(particleEffect, this.transform.localPosition + (Vector3.right * 4),

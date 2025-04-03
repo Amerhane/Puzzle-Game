@@ -29,7 +29,7 @@ public class GameController : MonoBehaviour
                                       //to enhance drop animation.
 
     private Grid<Tile> tiles;
-    float2 tileOffset;
+    private float2 tileOffset;
 
     private bool isPlaying;
 
